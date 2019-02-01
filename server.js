@@ -1,40 +1,98 @@
-// ==============================================================================
-// DEPENDENCIES
-// Series of npm packages that we will use to give our server useful functionality
-// ==============================================================================
-
 var express = require("express");
 
-// ==============================================================================
-// EXPRESS CONFIGURATION
-// This sets up the basic properties for our express server
-// ==============================================================================
-
-// Tells node that we are creating an "express" server
-// express() calls the express function and gives us an application instance that we save to our app variable
 var app = express();
 
-// Sets an initial port. We"ll use this later in our listener
 var PORT = process.env.PORT || 3000;
 
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ================================================================================
-// ROUTER
-// The below points our server to a series of "route" files.
-// These routes give our server a "map" of how to respond when users visit or request data from various URLs.
-// ================================================================================
-
+// ROUTER Files
 require("./app/routing/apiRoutes")(app);
 require("./app/routing/htmlRoutes")(app);
 
-// =============================================================================
-// LISTENER
-// The below code effectively "starts" our server
-// =============================================================================
+// Survey Page
+var config = {
+  ".chosen-select": {},
+  ".chosen-select-deselect": {
+    allow_single_deselect: true
+  },
+  ".chosen-select-no-single": {
+    disable_search_threshold: 10
+  },
+  ".chosen-select-no-results": {
+    no_results_text: "Oops, nothing found!"
+  },
+  ".chosen-select-width": {
+    width: "95%"
+  }
+};
+
+for (var selector in config) {
+  $(selector).chosen(config[selector]);
+}
+
+// Capture the form inputs
+$("#submit").on("click", function(event) {
+  event.preventDefault();
+
+  // Form validation
+  function validateForm() {
+    var isValid = true;
+    $(".form-control").each(function() {
+      if ($(this).val() === "") {
+        isValid = false;
+      }
+    });
+
+    $(".chosen-select").each(function() {
+
+      if ($(this).val() === "") {
+        isValid = false;
+      }
+    });
+    return isValid;
+  }
+
+  // If all required fields are filled
+  if (validateForm()) {
+    // Create an object for the user"s data
+    var userData = {
+      name: $("#name").val(),
+      photo: $("#photo").val(),
+      scores: [
+        $("#q1").val(),
+        $("#q2").val(),
+        $("#q3").val(),
+        $("#q4").val(),
+        $("#q5").val(),
+        $("#q6").val(),
+        $("#q7").val(),
+        $("#q8").val(),
+        $("#q9").val(),
+        $("#q10").val()
+      ]
+    };
+
+    // AJAX post the data to the friends API.
+    $.post("/api/friends", userData, function(data) {
+
+      // Grab the result from the AJAX post so that the best match's name and photo are displayed.
+      $("#match-name").text(data.name);
+      $("#match-img").attr("src", data.photo);
+
+      // Show the modal with the best match
+      $("#results-modal").modal("toggle");
+
+    });
+  } else {
+    alert("Please fill out all fields before submitting!");
+  }
+});
+
+// Listener that starts server
 
 app.listen(PORT, function() {
-  console.log("App listening on PORT: " + PORT);
+console.log("Running app locally on port" + PORT);
 });
