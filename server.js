@@ -27,8 +27,8 @@ app.use(express.json());
 // These routes give our server a "map" of how to respond when users visit or request data from various URLs.
 // ================================================================================
 
-require("../routing/apiRoutes")(app);
-require("../routing/htmlRoutes")(app);
+require("./app/routing/apiRoutes")(app);
+require("./app/routing/htmlRoutes")(app);
 
 // =============================================================================
 // LISTENER
@@ -38,15 +38,3 @@ require("../routing/htmlRoutes")(app);
 app.listen(PORT, function() {
   console.log("App listening on PORT: " + PORT);
 });
-
-
-var tableArray = [
-  {
-    Name: "Ahmed",
-    Photo: "https://media.wired.com/photos/598e35fb99d76447c4eb1f28/master/pass/phonepicutres-TA.jpg",
-    Scores:  [5, 1, 4, 4, 5, 1, 2, 5, 4, 1 ]
-  }
-];
-
-// Note how we export the array. This makes it accessible to other files using require.
-module.exports = tableArray;
