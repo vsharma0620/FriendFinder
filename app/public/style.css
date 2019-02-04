@@ -1,0 +1,19 @@
+body {
+  
+  background: navy;
+}
+.jumbotron {
+  opacity: 0.7;
+  background: #eeeeee
+}
+.footer {
+  position: fixed;
+  background-color: rgb(165, 133, 121);
+  font: Black;
+  width: 100%;
+  position: sticky;
+  align-content: center;
+}
+.container{
+  background: #eeeeee;
+}
